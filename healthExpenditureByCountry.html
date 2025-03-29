@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Expenditure vs Life Expectancy Scatter Plot</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin: 10px 0;
+        }
+        #chartContainer {
+            width: 100%;
+            max-width: 1000px;
+            height: 720px;
+            overflow: hidden;
+        }
+        #scatterChart {
+            width: 1000px !important;
+            height: 720px !important;
+        }
+        #controls {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #fontSizeSlider {
+            width: 300px;
+            margin-left: 10px;
+        }
+        #fontSizeLabel {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Health Expenditure (% of GDP per Capita) vs Life Expectancy (2019)</h2>
+    <div id="chartContainer">
+        <canvas id="scatterChart"></canvas>
+    </div>
+    <div id="controls">
+        <label for="fontSizeSlider">Label Font Size: </label>
+        <input type="range" id="fontSizeSlider" min="8" max="20" value="12" step="1">
+        <span id="fontSizeLabel">12px</span>
+    </div>
+
+    <script>
+        const dataPoints = [
+            { label: "AFGH", country: "Afghanistan", x: 13.35, y: 64.8, color: "#8B0000" },
+            { label: "ALBA", country: "Albania", x: 5.08, y: 78.6, color: "#006400" },
+            { label: "ALGE", country: "Algeria", x: 6.49, y: 76.9, color: "#00008B" },
+            { label: "ANDO", country: "Andorra", x: 8.12, y: 83.5, color: "#4B0082" },
+            { label: "ANGO", country: "Angola", x: 4.09, y: 61.1, color: "#8B4513" },
+            { label: "ANTI", country: "Antigua and Barbuda", x: 3.87, y: 77.0, color: "#2F0047" },
+            { label: "ARGE", country: "Argentina", x: 9.54, y: 76.7, color: "#8A2BE2" },
+            { label: "ARME", country: "Armenia", x: 11.22, y: 75.1, color: "#556B2F" },
+            { label: "AUST", country: "Australia", x: 9.38, y: 83.4, color: "#483D8B" },
+            { label: "AUTR", country: "Austria", x: 10.45, y: 81.5, color: "#8B008B" },
+            { label: "AZER", country: "Azerbaijan", x: 4.03, y: 73.0, color: "#2E8B57" },
+            { label: "BAHA", country: "Bahamas", x: 4.96, y: 73.9, color: "#4682B4" },
+            { label: "BAHR", country: "Bahrain", x: 4.71, y: 77.3, color: "#9ACD32" },
+            { label: "BANG", country: "Bangladesh", x: 2.26, y: 72.6, color: "#B22222" },
+            { label: "BARB", country: "Barbados", x: 6.37, y: 79.2, color: "#008B8B" },
+            { label: "BELA", country: "Belarus", x: 5.13, y: 74.8, color: "#6A5ACD" },
+            { label: "BELG", country: "Belgium", x: 10.68, y: 81.6, color: "#CD5C5C" },
+            { label: "BELI", country: "Belize", x: 6.14, y: 74.6, color: "#228B22" },
+            { label: "BENI", country: "Benin", x: 2.63, y: 61.8, color: "#8B0000" },
+            { label: "BHUT", country: "Bhutan", x: 3.55, y: 71.8, color: "#4A2F00" },
+            { label: "BOLI", country: "Bolivia", x: 6.31, y: 71.5, color: "#000080" },
+            { label: "BOSN", country: "Bosnia and Herzegovina", x: 7.79, y: 77.4, color: "#8A360F" },
+            { label: "BOTS", country: "Botswana", x: 6.07, y: 69.6, color: "#2F4F4F" },
+            { label: "BRAZ", country: "Brazil", x: 9.78, y: 75.9, color: "#800000" },
+            { label: "BRUN", country: "Brunei", x: 2.16, y: 75.9, color: "#006633" },
+            { label: "BULG", country: "Bulgaria", x: 6.18, y: 75.1, color: "#9932CC" },
+            { label: "BURK", country: "Burkina Faso", x: 6.23, y: 61.6, color: "#8B5A2B" },
+            { label: "BURU", country: "Burundi", x: 8.05, y: 61.6, color: "#5F9EA0" },
+            { label: "CAMB", country: "Cambodia", x: 5.54, y: 69.8, color: "#8B1A1A" },
+            { label: "CAME", country: "Cameroon", x: 4.26, y: 59.3, color: "#00688B" },
+            { label: "CANA", country: "Canada", x: 10.93, y: 82.4, color: "#8B4789" },
+            { label: "CAPE", country: "Cape Verde", x: 4.69, y: 73.0, color: "#458B00" },
+            { label: "CENT", country: "Central African Republic", x: 4.07, y: 53.3, color: "#8B6914" },
+            { label: "CHAD", country: "Chad", x: 4.23, y: 54.2, color: "#698B22" },
+            { label: "CHIL", country: "Chile", x: 7.73, y: 80.2, color: "#8B3A3A" },
+            { label: "CHIN", country: "China", x: 5.21, y: 76.9, color: "#104E8B" },
+            { label: "COLO", country: "Colombia", x: 7.70, y: 77.3, color: "#8B668B" },
+            { label: "COMO", country: "Comoros", x: 5.26, y: 64.3, color: "#528B8B" },
+            { label: "COND", country: "Congo, Dem. Rep.", x: 3.27, y: 60.7, color: "#8B7D6B" },
+            { label: "CONR", country: "Congo, Rep.", x: 3.82, y: 64.6, color: "#8B8970" },
+            { label: "COST", country: "Costa Rica", x: 7.47, y: 80.3, color: "#8B4500" },
+            { label: "COTE", country: "Côte d'Ivoire", x: 3.30, y: 57.8, color: "#6E8B3D" },
+            { label: "CROA", country: "Croatia", x: 6.97, y: 78.6, color: "#8B7E66" },
+            { label: "CUBA", country: "Cuba", x: 10.24, y: 78.8, color: "#8B3E2F" },
+            { label: "CYPR", country: "Cyprus", x: 7.26, y: 81.0, color: "#8B8386" },
+            { label: "CZEC", country: "Czech Republic", x: 7.85, y: 79.4, color: "#8B7B8B" },
+            { label: "DENM", country: "Denmark", x: 10.03, y: 81.0, color: "#27408B" },
+            { label: "DJIB", country: "Djibouti", x: 1.85, y: 67.1, color: "#8B8B00" },
+            { label: "DOMI", country: "Dominica", x: 5.57, y: 77.0, color: "#8B5F65" },
+            { label: "DOMR", country: "Dominican Republic", x: 5.23, y: 74.1, color: "#8B4C39" },
+            { label: "ECUA", country: "Ecuador", x: 7.86, y: 77.0, color: "#8B7355" },
+            { label: "EGYP", country: "Egypt", x: 4.31, y: 72.0, color: "#8B8878" },
+            { label: "ELSA", country: "El Salvador", x: 7.39, y: 73.3, color: "#548B54" },
+            { label: "EQUA", country: "Equatorial Guinea", x: 2.93, y: 58.7, color: "#8B814C" },
+            { label: "ERIT", country: "Eritrea", x: 3.89, y: 66.3, color: "#8B7D7B" },
+            { label: "ESTO", country: "Estonia", x: 6.74, y: 78.8, color: "#473C8B" },
+            { label: "ESWA", country: "Eswatini", x: 6.75, y: 60.2, color: "#8B8682" },
+            { label: "ETHI", country: "Ethiopia", x: 3.14, y: 66.6, color: "#8B8B7A" },
+            { label: "FIJI", country: "Fiji", x: 3.80, y: 67.9, color: "#36648B" },
+            { label: "FINL", country: "Finland", x: 9.12, y: 81.9, color: "#8B4789" },
+            { label: "FRAN", country: "France", x: 11.09, y: 82.7, color: "#8B1C62" },
+            { label: "GABO", country: "Gabon", x: 2.49, y: 66.5, color: "#8B658B" },
+            { label: "GAMB", country: "Gambia", x: 3.49, y: 62.1, color: "#8B7B8B" },
+            { label: "GEOR", country: "Georgia", x: 6.19, y: 73.8, color: "#698B69" },
+            { label: "GERM", country: "Germany", x: 11.71, y: 81.3, color: "#8B3626" },
+            { label: "GHAN", country: "Ghana", x: 3.04, y: 64.1, color: "#8B5A2B" },
+            { label: "GREE", country: "Greece", x: 7.73, y: 82.2, color: "#8B475D" },
+            { label: "GREN", country: "Grenada", x: 4.86, y: 72.4, color: "#8B7765" },
+            { label: "GUAT", country: "Guatemala", x: 5.64, y: 74.3, color: "#8B8386" },
+            { label: "GUIN", country: "Guinea", x: 3.47, y: 61.6, color: "#8B8B83" },
+            { label: "GBSU", country: "Guinea-Bissau", x: 4.03, y: 58.3, color: "#8B7E66" },
+            { label: "GUYA", country: "Guyana", x: 4.55, y: 70.0, color: "#8B8970" },
+            { label: "HAIT", country: "Haiti", x: 4.87, y: 64.0, color: "#8B668B" },
+            { label: "HOND", country: "Honduras", x: 8.47, y: 75.3, color: "#8B3A62" },
+            { label: "HUNG", country: "Hungary", x: 6.54, y: 76.2, color: "#8B7D6B" },
+            { label: "ICEL", country: "Iceland", x: 7.18, y: 83.0, color: "#8B4513" },
+            { label: "INDI", country: "India", x: 3.00, y: 69.7, color: "#8B5F65" },
+            { label: "INDO", country: "Indonesia", x: 2.87, y: 71.7, color: "#8B7355" },
+            { label: "IRAN", country: "Iran", x: 15.25, y: 76.7, color: "#8B0000" },
+            { label: "IRAQ", country: "Iraq", x: 3.39, y: 70.5, color: "#8B4789" },
+            { label: "IREL", country: "Ireland", x: 6.60, y: 82.3, color: "#8B668B" },
+            { label: "ISRA", country: "Israel", x: 6.74, y: 83.0, color: "#8B7E66" },
+            { label: "ITAL", country: "Italy", x: 8.80, y: 83.5, color: "#8B8970" },
+            { label: "JAMA", country: "Jamaica", x: 6.29, y: 74.5, color: "#8B3A3A" },
+            { label: "JAPA", country: "Japan", x: 10.85, y: 84.6, color: "#8B1C62" },
+            { label: "JORD", country: "Jordan", x: 6.79, y: 74.5, color: "#8B658B" },
+            { label: "KAZA", country: "Kazakhstan", x: 2.86, y: 73.6, color: "#8B7D7B" },
+            { label: "KENY", country: "Kenya", x: 4.14, y: 66.7, color: "#8B8682" },
+            { label: "KIRI", country: "Kiribati", x: 10.23, y: 68.4, color: "#8B8B7A" },
+            { label: "NKOR", country: "Korea, North", x: 2.94, y: 71.0, color: "#8B5A2B" },
+            { label: "SKOR", country: "Korea, South", x: 7.36, y: 83.0, color: "#8B475D" },
+            { label: "KOSO", country: "Kosovo", x: 4.07, y: 72.0, color: "#8B7765" },
+            { label: "KUWA", country: "Kuwait", x: 6.18, y: 78.9, color: "#8B8386" },
+            { label: "KYRG", country: "Kyrgyzstan", x: 5.12, y: 71.5, color: "#8B8B83" },
+            { label: "LAOS", country: "Laos", x: 2.68, y: 67.9, color: "#8B7E66" },
+            { label: "LATV", country: "Latvia", x: 6.63, y: 75.3, color: "#8B8970" },
+            { label: "LEBA", country: "Lebanon", x: 12.15, y: 78.9, color: "#8B668B" },
+            { label: "LESO", country: "Lesotho", x: 10.82, y: 54.3, color: "#8B3A62" },
+            { label: "LIBE", country: "Liberia", x: 8.27, y: 64.1, color: "#8B7D6B" },
+            { label: "LIBY", country: "Libya", x: 4.11, y: 72.9, color: "#8B4513" },
+            { label: "LIEC", country: "Liechtenstein", x: 2.77, y: 82.2, color: "#8B5F65" },
+            { label: "LITH", country: "Lithuania", x: 6.78, y: 75.9, color: "#8B7355" },
+            { label: "LUXE", country: "Luxembourg", x: 4.85, y: 82.3, color: "#8B0000" },
+            { label: "MADA", country: "Madagascar", x: 4.21, y: 67.0, color: "#8B4789" },
+            { label: "MALA", country: "Malawi", x: 6.08, y: 64.3, color: "#8B668B" },
+            { label: "MALY", country: "Malaysia", x: 3.84, y: 75.4, color: "#8B7E66" },
+            { label: "MALD", country: "Maldives", x: 10.86, y: 78.9, color: "#8B8970" },
+            { label: "MALI", country: "Mali", x: 3.87, y: 60.5, color: "#8B3A3A" },
+            { label: "MALT", country: "Malta", x: 8.49, y: 82.5, color: "#8B1C62" },
+            { label: "MARS", country: "Marshall Islands", x: 15.71, y: 74.0, color: "#8B658B" },
+            { label: "MAUR", country: "Mauritania", x: 3.45, y: 64.9, color: "#8B7D7B" },
+            { label: "MAUI", country: "Mauritius", x: 5.03, y: 74.9, color: "#8B8682" },
+            { label: "MEXI", country: "Mexico", x: 5.43, y: 75.1, color: "#8B8B7A" },
+            { label: "MICR", country: "Micronesia", x: 11.86, y: 73.7, color: "#8B5A2B" },
+            { label: "MOLD", country: "Moldova", x: 5.60, y: 71.9, color: "#8B475D" },
+            { label: "MONA", country: "Monaco", x: 3.23, y: 89.4, color: "#8B7765" },
+            { label: "MONG", country: "Mongolia", x: 3.73, y: 70.0, color: "#8B8386" },
+            { label: "MONT", country: "Montenegro", x: 7.84, y: 76.9, color: "#8B8B83" },
+            { label: "MORO", country: "Morocco", x: 5.84, y: 72.4, color: "#8B7E66" },
+            { label: "MOZA", country: "Mozambique", x: 6.76, y: 60.2, color: "#8B8970" },
+            { label: "MYAN", country: "Myanmar", x: 4.26, y: 67.1, color: "#8B668B" },
+            { label: "NAMI", country: "Namibia", x: 8.10, y: 63.7, color: "#8B3A62" },
+            { label: "NAUR", country: "Nauru", x: 11.59, y: 67.6, color: "#8B7D6B" },
+            { label: "NEPA", country: "Nepal", x: 4.95, y: 70.8, color: "#8B4513" },
+            { label: "NETH", country: "Netherlands", x: 10.29, y: 82.3, color: "#8B5F65" },
+            { label: "NEWZ", country: "New Zealand", x: 9.35, y: 82.1, color: "#8B7355" },
+            { label: "NICA", country: "Nicaragua", x: 8.42, y: 74.5, color: "#8B0000" },
+            { label: "NIGE", country: "Niger", x: 5.42, y: 62.4, color: "#8B4789" },
+            { label: "NIGR", country: "Nigeria", x: 3.14, y: 54.7, color: "#8B668B" },
+            { label: "NMAC", country: "North Macedonia", x: 6.63, y: 75.8, color: "#8B7E66" },
+            { label: "NORW", country: "Norway", x: 10.62, y: 82.4, color: "#8B8970" },
+            { label: "OMAN", country: "Oman", x: 4.43, y: 77.9, color: "#8B3A3A" },
+            { label: "PAKI", country: "Pakistan", x: 2.52, y: 67.3, color: "#8B1C62" },
+            { label: "PALA", country: "Palau", x: 15.49, y: 73.7, color: "#8B658B" },
+            { label: "PANA", country: "Panama", x: 7.08, y: 78.5, color: "#8B7D7B" },
+            { label: "PAPU", country: "Papua New Guinea", x: 2.35, y: 64.5, color: "#8B8682" },
+            { label: "PARA", country: "Paraguay", x: 7.50, y: 74.3, color: "#8B8B7A" },
+            { label: "PERU", country: "Peru", x: 5.20, y: 76.7, color: "#8B5A2B" },
+            { label: "PHIL", country: "Philippines", x: 4.23, y: 71.2, color: "#8B475D" },
+            { label: "POLA", country: "Poland", x: 6.70, y: 78.7, color: "#8B7765" },
+            { label: "PORT", country: "Portugal", x: 9.66, y: 82.0, color: "#8B8386" },
+            { label: "QATA", country: "Qatar", x: 3.24, y: 80.2, color: "#8B8B83" },
+            { label: "ROMA", country: "Romania", x: 5.37, y: 76.1, color: "#8B7E66" },
+            { label: "RUSS", country: "Russia", x: 5.26, y: 73.2, color: "#8B8970" },
+            { label: "RWAN", country: "Rwanda", x: 5.85, y: 69.0, color: "#8B668B" },
+            { label: "SKIT", country: "Saint Kitts and Nevis", x: 4.58, y: 76.2, color: "#8B3A62" },
+            { label: "SLUC", country: "Saint Lucia", x: 3.96, y: 76.2, color: "#8B7D6B" },
+            { label: "SVIN", country: "Saint Vincent and the Grenadines", x: 4.73, y: 72.5, color: "#8B4513" },
+            { label: "SAMO", country: "Samoa", x: 5.31, y: 73.3, color: "#8B5F65" },
+            { label: "SMAR", country: "San Marino", x: 6.44, y: 83.4, color: "#8B7355" },
+            { label: "STPR", country: "São Tomé and Príncipe", x: 5.30, y: 70.4, color: "#8B0000" },
+            { label: "SAUD", country: "Saudi Arabia", x: 5.25, y: 75.1, color: "#8B4789" },
+            { label: "SENE", country: "Senegal", x: 3.73, y: 67.9, color: "#8B668B" },
+            { label: "SERB", country: "Serbia", x: 8.05, y: 76.0, color: "#8B7E66" },
+            { label: "SEYC", country: "Seychelles", x: 4.68, y: 73.4, color: "#8B8970" },
+            { label: "SIER", country: "Sierra Leone", x: 8.16, y: 54.7, color: "#8B3A3A" },
+            { label: "SING", country: "Singapore", x: 4.04, y: 83.6, color: "#8B1C62" },
+            { label: "SLOV", country: "Slovakia", x: 6.94, y: 77.5, color: "#8B658B" },
+            { label: "SLON", country: "Slovenia", x: 8.55, y: 81.3, color: "#8B7D7B" },
+            { label: "SOLO", country: "Solomon Islands", x: 4.30, y: 73.0, color: "#8B8682" },
+            { label: "SOMA", country: "Somalia", x: 4.76, y: 57.4, color: "#8B8B7A" },
+            { label: "SAFR", country: "South Africa", x: 8.17, y: 64.1, color: "#8B5A2B" },
+            { label: "SSUD", country: "South Sudan", x: 2.43, y: 57.7, color: "#8B475D" },
+            { label: "SPAI", country: "Spain", x: 9.15, y: 83.6, color: "#8B7765" },
+            { label: "SRIL", country: "Sri Lanka", x: 3.92, y: 77.0, color: "#8B8386" },
+            { label: "SUDA", country: "Sudan", x: 10.66, y: 65.3, color: "#8B8B83" },
+            { label: "SURI", country: "Suriname", x: 7.74, y: 71.7, color: "#8B7E66" },
+            { label: "SWED", country: "Sweden", x: 10.56, y: 82.8, color: "#8B8970" },
+            { label: "SWIT", country: "Switzerland", x: 11.79, y: 83.8, color: "#8B668B" },
+            { label: "SYRI", country: "Syria", x: 8.44, y: 71.8, color: "#8B3A62" },
+            { label: "TAIW", country: "Taiwan", x: 6.56, y: 80.7, color: "#8B7D6B" },
+            { label: "TAJI", country: "Tajikistan", x: 7.13, y: 71.1, color: "#8B4513" },
+            { label: "TANZ", country: "Tanzania", x: 3.48, y: 65.5, color: "#8B5F65" },
+            { label: "THAI", country: "Thailand", x: 4.09, y: 77.2, color: "#8B7355" },
+            { label: "TIMO", country: "Timor-Leste", x: 5.66, y: 69.6, color: "#8B0000" },
+            { label: "TOGO", country: "Togo", x: 5.56, y: 61.0, color: "#8B4789" },
+            { label: "TONG", country: "Tonga", x: 5.06, y: 70.9, color: "#8B668B" },
+            { label: "TRIN", country: "Trinidad and Tobago", x: 6.15, y: 73.5, color: "#8B7E66" },
+            { label: "TUNI", country: "Tunisia", x: 6.69, y: 76.7, color: "#8B8970" },
+            { label: "TURK", country: "Turkey", x: 4.38, y: 77.7, color: "#8B3A3A" },
+            { label: "TURM", country: "Turkmenistan", x: 6.62, y: 68.2, color: "#8B1C62" },
+            { label: "TUVA", country: "Tuvalu", x: 16.70, y: 67.9, color: "#8B658B" },
+            { label: "UGAN", country: "Uganda", x: 4.62, y: 63.4, color: "#8B7D7B" },
+            { label: "UKRA", country: "Ukraine", x: 6.09, y: 72.0, color: "#8B8682" },
+            { label: "UAE", country: "United Arab Emirates", x: 4.28, y: 78.0, color: "#8B8B7A" },
+            { label: "UK", country: "United Kingdom", x: 10.19, y: 81.3, color: "#8B5A2B" },
+            { label: "USA", country: "United States", x: 16.72, y: 78.9, color: "#8B475D" },
+            { label: "URUG", country: "Uruguay", x: 8.83, y: 77.9, color: "#8B7765" },
+            { label: "UZBE", country: "Uzbekistan", x: 7.01, y: 71.7, color: "#8B8386" },
+            { label: "VANU", country: "Vanuatu", x: 3.74, y: 70.5, color: "#8B8B83" },
+            { label: "VENE", country: "Venezuela", x: 4.91, y: 72.1, color: "#8B7E66" },
+            { label: "VIET", country: "Vietnam", x: 6.67, y: 75.4, color: "#8B8970" },
+            { label: "YEME", country: "Yemen", x: 8.12, y: 66.1, color: "#8B668B" },
+            { label: "ZAMB", country: "Zambia", x: 5.13, y: 63.9, color: "#8B3A62" },
+            { label: "ZIMB", country: "Zimbabwe", x: 7.51, y: 61.5, color: "#8B7D6B" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verify canvas exists
+            const canvas = document.getElementById('scatterChart');
+            if (!canvas) {
+                console.error('Canvas element not found');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Failed to get 2D context');
+                return;
+            }
+
+            // Register ChartDataLabels plugin explicitly
+            if (typeof ChartDataLabels !== 'undefined') {
+                Chart.register(ChartDataLabels);
+            } else {
+                console.warn('ChartDataLabels plugin not loaded');
+            }
+
+            // Initialize the chart
+            const scatterChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Countries',
+                        data: dataPoints.map(point => ({ x: point.x, y: point.y })),
+                        backgroundColor: dataPoints.map(point => point.color),
+                        borderColor: dataPoints.map(point => point.color),
+                        borderWidth: 1,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true, // Explicitly enable tooltips
+                            callbacks: {
+                                label: function(context) {
+                                    const point = dataPoints[context.dataIndex];
+                                    // Ensure point exists and has required properties
+                                    if (point && point.country && point.label && point.x !== undefined && point.y !== undefined) {
+                                        return `${point.country} (${point.label}): ${point.x}% Health Exp., ${point.y} years`;
+                                    }
+                                    return 'Data unavailable';
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            align: 'right',
+                            anchor: 'center',
+                            color: dataPoints.map(point => point.color || '#000000'), // Fallback color
+                            font: { size: 12 },
+                            formatter: (value, context) => {
+                                const point = dataPoints[context.dataIndex];
+                                return point ? point.label : '';
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Health Expenditure (% of GDP per Capita)' },
+                            min: 0,
+                            max: 20
+                        },
+                        y: {
+                            title: { display: true, text: 'Life Expectancy (Years)' },
+                            min: 50,
+                            max: 90
+                        }
+                    },
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Slider for font size adjustment
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            const fontSizeLabel = document.getElementById('fontSizeLabel');
+            if (fontSizeSlider && fontSizeLabel) {
+                fontSizeSlider.addEventListener('input', function() {
+                    const newSize = parseInt(this.value);
+                    fontSizeLabel.textContent = `${newSize}px`;
+                    scatterChart.options.plugins.datalabels.font.size = newSize;
+                    scatterChart.update(); // Immediate update (removed setTimeout for Safari)
+                });
+            } else {
+                console.warn('Slider or label element not found');
+            }
+
+            // Log success for debugging
+            console.log('Chart initialized successfully');
+        });
+    </script>
+</body>
+</html>
