@@ -22,15 +22,15 @@
             margin: 10px 0;
         }
         #chartContainer {
-    width: 100%;
-    max-width: calc(1000px * 1); /* Adjust the 0.9 to change the scale (e.g., 0.8 for 20% smaller) */
-    height: calc(720px * 0.7); /* Adjust the 0.9 to change the scale */
-    overflow: hidden;
-}
-#scatterChart {
-    width: calc(1000px * 1) !important; /* Adjust the 0.9 to change the scale */
-    height: calc(720px * 0.7) !important; /* Adjust the 0.9 to change the scale */
-}
+            width: 100%;
+            max-width: calc(1000px * 1);
+            height: calc(720px * 0.7);
+            overflow: hidden;
+        }
+        #scatterChart {
+            width: calc(1000px * 1) !important;
+            height: calc(720px * 0.7) !important;
+        }
         #controls {
             margin-top: 10px;
             display: flex;
@@ -83,61 +83,56 @@
     </div>
 
     <script>
-       const dataPoints = [
-    { label: "ICEL", country: "Iceland", x: 7.18, y: 83.0, color: "#4B0082" }, // Indigo
-    { label: "FINL", country: "Finland", x: 9.12, y: 81.9, color: "#8B0000" }, // Dark Red
-    { label: "NORW", country: "Norway", x: 10.62, y: 82.4, color: "#006400" }, // Dark Green
-    { label: "SWED", country: "Sweden", x: 10.56, y: 82.8, color: "#2F4F4F" }, // Dark Slate Gray
-    { label: "DENM", country: "Denmark", x: 10.03, y: 81.0, color: "#8B4513" }, // Saddle Brown
-    { label: "IREL", country: "Ireland", x: 6.60, y: 82.3, color: "#483D8B" }, // Dark Slate Blue
-    { label: "UK", country: "United Kingdom", x: 10.19, y: 81.3, color: "#800000" }, // Maroon
-    { label: "GERM", country: "Germany", x: 11.71, y: 81.3, color: "#2E8B57" }, // Sea Green
-    { label: "FRAN", country: "France", x: 11.09, y: 82.7, color: "#8B008B" }, // Dark Magenta
-    { label: "NETH", country: "Netherlands", x: 10.29, y: 82.3, color: "#4682B4" }, // Steel Blue
-    { label: "BELG", country: "Belgium", x: 10.68, y: 81.6, color: "#556B2F" }, // Dark Olive Green
-    { label: "AUTR", country: "Austria", x: 10.45, y: 81.5, color: "#B22222" }, // Firebrick
-    { label: "SWIT", country: "Switzerland", x: 11.79, y: 83.8, color: "#008B8B" }, // Dark Cyan
-    { label: "LUXE", country: "Luxembourg", x: 4.85, y: 82.3, color: "#6A5ACD" }, // Slate Blue
-    { label: "PORT", country: "Portugal", x: 9.66, y: 82.0, color: "#CD5C5C" }, // Indian Red
-    { label: "SPAI", country: "Spain", x: 9.15, y: 83.6, color: "#228B22" }, // Forest Green
-    { label: "ITAL", country: "Italy", x: 8.80, y: 83.5, color: "#4A2F00" }, // Dark Brown
-    { label: "GREE", country: "Greece", x: 7.73, y: 82.2, color: "#000080" }, // Navy
-    { label: "SLON", country: "Slovenia", x: 8.55, y: 81.3, color: "#8A360F" }, // Dark Orange
-    { label: "CZEC", country: "Czech Republic", x: 7.85, y: 79.4, color: "#9932CC" }, // Dark Orchid
-    { label: "POLA", country: "Poland", x: 6.70, y: 78.7, color: "#8B5A2B" }, // Tan (darker)
-    { label: "SLOV", country: "Slovakia", x: 6.94, y: 77.5, color: "#5F9EA0" }, // Cadet Blue
-    { label: "HUNG", country: "Hungary", x: 6.54, y: 76.2, color: "#8B1A1A" }, // Dark Red (variant)
-    { label: "LATV", country: "Latvia", x: 6.63, y: 75.3, color: "#00688B" }, // Deep Sky Blue (darker)
-    { label: "LITH", country: "Lithuania", x: 6.78, y: 75.9, color: "#8B4789" }, // Medium Orchid (darker)
-    { label: "ESTO", country: "Estonia", x: 6.74, y: 78.8, color: "#458B00" }, // Olive Drab
-    { label: "CROA", country: "Croatia", x: 6.97, y: 78.6, color: "#8B6914" }, // Dark Goldenrod
-    { label: "ROMA", country: "Romania", x: 5.37, y: 76.1, color: "#698B22" }, // Olive Green
-    { label: "BULG", country: "Bulgaria", x: 6.18, y: 75.1, color: "#8B3A3A" }, // Indian Red (variant)
-    // North America
-    { label: "CANA", country: "Canada", x: 10.93, y: 82.4, color: "#104E8B" }, // Dodger Blue (darker)
-    { label: "USA", country: "United States", x: 16.72, y: 78.9, color: "#8B668B" }, // Plum (darker)
-    { label: "MEXI", country: "Mexico", x: 5.43, y: 75.1, color: "#528B8B" }, // Dark Cyan (variant)
-    // South America
-    { label: "COST", country: "Costa Rica", x: 7.47, y: 80.3, color: "#8B7D6B" }, // Dark Khaki
-    { label: "CHIL", country: "Chile", x: 7.73, y: 80.2, color: "#8B8970" }, // Dark Sea Green (variant)
-    { label: "COLO", country: "Colombia", x: 7.70, y: 77.3, color: "#8B4500" }, // Dark Orange
-    { label: "ARGE", country: "Argentina", x: 9.54, y: 76.7, color: "#6E8B3D" }, // Dark Olive Green (variant)
-    { label: "BRAZ", country: "Brazil", x: 9.78, y: 75.9, color: "#8B7E66" }, // Dark Salmon (variant)
-    { label: "PERU", country: "Peru", x: 5.20, y: 76.7, color: "#8B3E2F" }, // Coral (darker)
-    // Asia
-    { label: "SKOR", country: "Korea, South", x: 7.36, y: 83.0, color: "#8B8386" }, // Rosy Brown (darker)
-    { label: "JAPA", country: "Japan", x: 10.85, y: 84.6, color: "#8B7B8B" }, // Mauve (custom)
-    { label: "ISRA", country: "Israel", x: 6.74, y: 83.0, color: "#27408B" }, // Royal Blue (darker)
-    { label: "CHIN", country: "China", x: 5.21, y: 76.9, color: "#8B8B00" }, // Dark Yellow (custom)
-    { label: "TURK", country: "Turkey", x: 4.38, y: 77.7, color: "#8B5F65" }, // Medium Violet Red (darker)
-    { label: "INDO", country: "Indonesia", x: 2.87, y: 71.7, color: "#8B4C39" }, // Salmon (darker)
-    { label: "INDI", country: "India", x: 3.00, y: 69.7, color: "#8B7355" }, // Peru (darker)
-    // Africa
-    { label: "SAFR", country: "South Africa", x: 8.17, y: 64.1, color: "#8B8878" }, // Dark Gray (variant)
-    // Oceania
-    { label: "AUST", country: "Australia", x: 9.38, y: 83.4, color: "#548B54" }, // Pale Green (darker)
-    { label: "NEWZ", country: "New Zealand", x: 9.35, y: 82.1, color: "#8B814C" } // Light Goldenrod (darker)
-];
+        const dataPoints = [
+            { label: "ICEL", country: "Iceland", x: 7.18, y: 83.0, color: "#4B0082" },
+            { label: "FINL", country: "Finland", x: 9.12, y: 81.9, color: "#8B0000" },
+            { label: "NORW", country: "Norway", x: 10.62, y: 82.4, color: "#006400" },
+            { label: "SWED", country: "Sweden", x: 10.56, y: 82.8, color: "#2F4F4F" },
+            { label: "DENM", country: "Denmark", x: 10.03, y: 81.0, color: "#8B4513" },
+            { label: "IREL", country: "Ireland", x: 6.60, y: 82.3, color: "#483D8B" },
+            { label: "UK", country: "United Kingdom", x: 10.19, y: 81.3, color: "#800000" },
+            { label: "GERM", country: "Germany", x: 11.71, y: 81.3, color: "#2E8B57" },
+            { label: "FRAN", country: "France", x: 11.09, y: 82.7, color: "#8B008B" },
+            { label: "NETH", country: "Netherlands", x: 10.29, y: 82.3, color: "#4682B4" },
+            { label: "BELG", country: "Belgium", x: 10.68, y: 81.6, color: "#556B2F" },
+            { label: "AUTR", country: "Austria", x: 10.45, y: 81.5, color: "#B22222" },
+            { label: "SWIT", country: "Switzerland", x: 11.79, y: 83.8, color: "#008B8B" },
+            { label: "LUXE", country: "Luxembourg", x: 4.85, y: 82.3, color: "#6A5ACD" },
+            { label: "PORT", country: "Portugal", x: 9.66, y: 82.0, color: "#CD5C5C" },
+            { label: "SPAI", country: "Spain", x: 9.15, y: 83.6, color: "#228B22" },
+            { label: "ITAL", country: "Italy", x: 8.80, y: 83.5, color: "#4A2F00" },
+            { label: "GREE", country: "Greece", x: 7.73, y: 82.2, color: "#000080" },
+            { label: "SLON", country: "Slovenia", x: 8.55, y: 81.3, color: "#8A360F" },
+            { label: "CZEC", country: "Czech Republic", x: 7.85, y: 79.4, color: "#9932CC" },
+            { label: "POLA", country: "Poland", x: 6.70, y: 78.7, color: "#8B5A2B" },
+            { label: "SLOV", country: "Slovakia", x: 6.94, y: 77.5, color: "#5F9EA0" },
+            { label: "HUNG", country: "Hungary", x: 6.54, y: 76.2, color: "#8B1A1A" },
+            { label: "LATV", country: "Latvia", x: 6.63, y: 75.3, color: "#00688B" },
+            { label: "LITH", country: "Lithuania", x: 6.78, y: 75.9, color: "#8B4789" },
+            { label: "ESTO", country: "Estonia", x: 6.74, y: 78.8, color: "#458B00" },
+            { label: "CROA", country: "Croatia", x: 6.97, y: 78.6, color: "#8B6914" },
+            { label: "ROMA", country: "Romania", x: 5.37, y: 76.1, color: "#698B22" },
+            { label: "BULG", country: "Bulgaria", x: 6.18, y: 75.1, color: "#8B3A3A" },
+            { label: "CANA", country: "Canada", x: 10.93, y: 82.4, color: "#104E8B" },
+            { label: "USA", country: "United States", x: 16.72, y: 78.9, color: "#8B668B" },
+            { label: "MEXI", country: "Mexico", x: 5.43, y: 75.1, color: "#528B8B" },
+            { label: "COST", country: "Costa Rica", x: 7.47, y: 80.3, color: "#8B7D6B" },
+            { label: "CHIL", country: "Chile", x: 7.73, y: 80.2, color: "#8B8970" },
+            { label: "COLO", country: "Colombia", x: 7.70, y: 77.3, color: "#8B4500" },
+            { label: "ARGE", country: "Argentina", x: 9.54, y: 76.7, color: "#6E8B3D" },
+            { label: "BRAZ", country: "Brazil", x: 9.78, y: 75.9, color: "#8B7E66" },
+            { label: "PERU", country: "Peru", x: 5.20, y: 76.7, color: "#8B3E2F" },
+            { label: "SKOR", country: "Korea, South", x: 7.36, y: 83.0, color: "#8B8386" },
+            { label: "JAPA", country: "Japan", x: 10.85, y: 84.6, color: "#8B7B8B" },
+            { label: "ISRA", country: "Israel", x: 6.74, y: 83.0, color: "#27408B" },
+            { label: "CHIN", country: "China", x: 5.21, y: 76.9, color: "#8B8B00" },
+            { label: "TURK", country: "Turkey", x: 4.38, y: 77.7, color: "#8B5F65" },
+            { label: "INDO", country: "Indonesia", x: 2.87, y: 71.7, color: "#8B4C39" },
+            { label: "INDI", country: "India", x: 3.00, y: 69.7, color: "#8B7355" },
+            { label: "SAFR", country: "South Africa", x: 8.17, y: 64.1, color: "#8B8878" },
+            { label: "AUST", country: "Australia", x: 9.38, y: 83.4, color: "#548B54" },
+            { label: "NEWZ", country: "New Zealand", x: 9.35, y: 82.1, color: "#8B814C" }
+        ];
 
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('scatterChart');
@@ -158,6 +153,86 @@
                 console.warn('ChartDataLabels plugin not loaded');
             }
 
+            // Custom plugin to draw indicator lines
+            const labelIndicatorPlugin = {
+                id: 'labelIndicator',
+                afterDatasetsDraw(chart) {
+                    const { ctx, chartArea } = chart;
+                    const meta = chart.getDatasetMeta(0);
+                    ctx.save();
+                    meta.data.forEach((element, index) => {
+                        const point = dataPoints[index];
+                        const labelModel = element.$datalabels[0];
+                        if (!labelModel) return;
+
+                        const dotX = element.x;
+                        const dotY = element.y;
+                        const labelX = labelModel.x;
+                        const labelY = labelModel.y + labelModel.height / 2;
+                        const color = point.color;
+
+                        ctx.beginPath();
+                        ctx.moveTo(dotX, dotY);
+                        ctx.lineTo(labelX, labelY);
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    });
+                    ctx.restore();
+                }
+            };
+
+            Chart.register(labelIndicatorPlugin);
+
+            // Function to calculate label bounding box
+            function getLabelBounds(chart, index, position, fontSize) {
+                const meta = chart.getDatasetMeta(0);
+                const element = meta.data[index];
+                const label = dataPoints[index].label;
+                const offset = 10; // Matches datalabels offset
+                const textWidth = ctx.measureText(label).width;
+                const textHeight = fontSize; // Approximate height based on font size
+                let x = element.x;
+                let y = element.y;
+
+                switch (position) {
+                    case 'top':
+                        x -= textWidth / 2;
+                        y -= offset + textHeight;
+                        break;
+                    case 'bottom':
+                        x -= textWidth / 2;
+                        y += offset;
+                        break;
+                    case 'left':
+                        x -= textWidth + offset;
+                        y -= textHeight / 2;
+                        break;
+                    case 'right':
+                        x += offset;
+                        y -= textHeight / 2;
+                        break;
+                }
+
+                return {
+                    left: x,
+                    right: x + textWidth,
+                    top: y,
+                    bottom: y + textHeight
+                };
+            }
+
+            // Function to check if two bounding boxes overlap
+            function doBoundsOverlap(bounds1, bounds2) {
+                return !(
+                    bounds1.right < bounds2.left ||
+                    bounds1.left > bounds2.right ||
+                    bounds1.bottom < bounds2.top ||
+                    bounds1.top > bounds2.bottom
+                );
+            }
+
+            // Initialize chart to get initial positions, then adjust
             const scatterChart = new Chart(ctx, {
                 type: 'scatter',
                 data: {
@@ -173,53 +248,30 @@
                 },
                 options: {
                     plugins: {
-    legend: { display: false },
-    tooltip: {
-        enabled: true,
-        callbacks: {
-            label: function(context) {
-                const point = dataPoints[context.dataIndex];
-                if (point && point.country && point.label && point.x !== undefined && point.y !== undefined) {
-                    return `${point.country} (${point.label}): ${point.x}% Health Exp., ${point.y} years`;
-                }
-                return 'Data unavailable';
-            }
-        }
-    },
-    datalabels: {
-        display: true,
-        align: 'right',
-        anchor: 'center',
-        color: dataPoints.map(point => point.color || '#000000'),
-        font: { size: 12 },
-        formatter: (value, context) => {
-            const point = dataPoints[context.dataIndex];
-            return point ? point.label : '';
-        },
-        listeners: {
-            enter: function(context) {
-                const chart = context.chart;
-                const dataIndex = context.dataIndex;
-                // Set the active element to the data point to trigger the tooltip
-                chart.setActiveElements([
-                    { datasetIndex: 0, index: dataIndex }
-                ]);
-                chart.tooltip.setActiveElements([
-                    { datasetIndex: 0, index: dataIndex }
-                ]);
-                chart.update();
-                return true; // Return true to keep the label active
-            },
-            leave: function(context) {
-                const chart = context.chart;
-                // Clear active elements to hide the tooltip
-                chart.setActiveElements([]);
-                chart.tooltip.setActiveElements([]);
-                chart.update();
-            }
-        }
-    }
-},
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const point = dataPoints[context.dataIndex];
+                                    if (point && point.country && point.label && point.x !== undefined && point.y !== undefined) {
+                                        return `${point.country} (${point.label}): ${point.x}% Health Exp., ${point.y} years`;
+                                    }
+                                    return 'Data unavailable';
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: dataPoints.map(point => point.color || '#000000'),
+                            font: { size: 7 },
+                            formatter: (value, context) => dataPoints[context.dataIndex]?.label || '',
+                            align: 'top', // Initial placeholder, will be updated
+                            anchor: 'center',
+                            offset: 10,
+                            clamp: true
+                        }
+                    },
                     scales: {
                         x: {
                             title: { display: true, text: 'Health Expenditure (% of GDP per Capita)' },
@@ -236,6 +288,74 @@
                 }
             });
 
+            // Collision detection and repositioning logic
+            const positions = ['top', 'bottom', 'left', 'right'];
+            const initialFontSize = 7;
+            const assignedPositions = new Array(dataPoints.length).fill('top'); // Start with 'top'
+
+            for (let i = 0; i < dataPoints.length; i++) {
+                let currentPosition = assignedPositions[i];
+                let bounds = getLabelBounds(scatterChart, i, currentPosition, initialFontSize);
+                let collision = false;
+
+                // Check for overlap with all previously positioned labels
+                for (let j = 0; j < i; j++) {
+                    const otherBounds = getLabelBounds(scatterChart, j, assignedPositions[j], initialFontSize);
+                    if (doBoundsOverlap(bounds, otherBounds)) {
+                        collision = true;
+                        break;
+                    }
+                }
+
+                // If collision, try other positions
+                if (collision) {
+                    for (let pos of positions) {
+                        if (pos === currentPosition) continue;
+                        bounds = getLabelBounds(scatterChart, i, pos, initialFontSize);
+                        collision = false;
+
+                        for (let j = 0; j < i; j++) {
+                            const otherBounds = getLabelBounds(scatterChart, j, assignedPositions[j], initialFontSize);
+                            if (doBoundsOverlap(bounds, otherBounds)) {
+                                collision = true;
+                                break;
+                            }
+                        }
+
+                        if (!collision) {
+                            assignedPositions[i] = pos;
+                            break; // Found a non-overlapping position
+                        }
+                    }
+                }
+            }
+
+            // Assign final positions to dataPoints
+            dataPoints.forEach((point, index) => {
+                point.labelPosition = assignedPositions[index];
+            });
+
+            // Update chart with final positions
+            scatterChart.options.plugins.datalabels.align = (context) => dataPoints[context.dataIndex].labelPosition;
+            scatterChart.options.plugins.datalabels.listeners = {
+                enter: function(context) {
+                    const chart = context.chart;
+                    const dataIndex = context.dataIndex;
+                    chart.setActiveElements([{ datasetIndex: 0, index: dataIndex }]);
+                    chart.tooltip.setActiveElements([{ datasetIndex: 0, index: dataIndex }]);
+                    chart.update();
+                    return true;
+                },
+                leave: function(context) {
+                    const chart = context.chart;
+                    chart.setActiveElements([]);
+                    chart.tooltip.setActiveElements([]);
+                    chart.update();
+                }
+            };
+            scatterChart.update();
+
+            // Font size slider
             const fontSizeSlider = document.getElementById('fontSizeSlider');
             const fontSizeLabel = document.getElementById('fontSizeLabel');
             if (fontSizeSlider && fontSizeLabel) {
