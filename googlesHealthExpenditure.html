@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Expenditure vs Lifespan Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        #controls {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            background-color: #f8f8f8;
+        }
+        #controls > div {
+            margin-right: 20px;
+            margin-bottom: 5px;
+        }
+        #controls label {
+            margin-right: 5px;
+        }
+        #chart-container {
+            flex-grow: 1;
+            position: relative;
+            background-color: white;
+            padding: 10px;
+        }
+        .region-filter input[type="checkbox"] {
+            margin-right: 3px;
+        }
+        #font-size-control label {
+            margin-right: 5px;
+        }
+        #font-size-value {
+            display: inline-block;
+            min-width: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="controls">
+        <div id="region-filters">
+            <strong>Filter by Region:</strong>
+        </div>
+        <div id="font-size-control">
+            <label for="fontSizeSlider">Label Font Size:</label>
+            <input type="range" id="fontSizeSlider" min="4" max="20" value="8">
+            <span id="font-size-value">8</span>px
+        </div>
+    </div>
+    <div id="chart-container">
+        <canvas id="expenditureChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<script>
+    // --- 1. Parsed Data ---
+    const countriesData = [
+        { name: "Monaco", mnemonic: "MCO", region: "Europe", age: 86.37, expenditure: 6436, color: getRandomColor() },
+        { name: "Hong Kong", mnemonic: "HKG", region: "Asia", age: 85.51, expenditure: 2525, color: getRandomColor() }, // Note: Expenditure estimated, not in CSV
+        { name: "Japan", mnemonic: "JPN", region: "Asia", age: 84.71, expenditure: 5251, color: getRandomColor() },
+        { name: "South Korea", mnemonic: "KOR", region: "Asia", age: 84.33, expenditure: 4570, color: getRandomColor() },
+        { name: "French Polynesia", mnemonic: "PYF", region: "Oceania", age: 84.07, expenditure: 3000, color: getRandomColor() }, // Estimated
+        { name: "Andorra", mnemonic: "AND", region: "Europe", age: 84.04, expenditure: 3337, color: getRandomColor() },
+        { name: "Switzerland", mnemonic: "CHE", region: "Europe", age: 83.95, expenditure: 8049, color: getRandomColor() },
+        { name: "Australia", mnemonic: "AUS", region: "Oceania", age: 83.92, expenditure: 6596, color: getRandomColor() },
+        { name: "Italy", mnemonic: "ITA", region: "Europe", age: 83.72, expenditure: 4291, color: getRandomColor() },
+        { name: "Spain", mnemonic: "ESP", region: "Europe", age: 83.67, expenditure: 4462, color: getRandomColor() },
+        { name: "France", mnemonic: "FRA", region: "Europe", age: 83.33, expenditure: 6517, color: getRandomColor() },
+        { name: "Norway", mnemonic: "NOR", region: "Europe", age: 83.31, expenditure: 7898, color: getRandomColor() },
+        { name: "Sweden", mnemonic: "SWE", region: "Europe", age: 83.26, expenditure: 6438, color: getRandomColor() },
+        { name: "Canada", mnemonic: "CAN", region: "North America", age: 82.63, expenditure: 6319, color: getRandomColor() },
+        { name: "Israel", mnemonic: "ISR", region: "Asia", age: 82.41, expenditure: 3444, color: getRandomColor() },
+        { name: "Portugal", mnemonic: "PRT", region: "Europe", age: 82.36, expenditure: 4162, color: getRandomColor() },
+        { name: "Netherlands", mnemonic: "NLD", region: "Europe", age: 82.16, expenditure: 7358, color: getRandomColor() },
+        { name: "Belgium", mnemonic: "BEL", region: "Europe", age: 82.11, expenditure: 6600, color: getRandomColor() },
+        { name: "Austria", mnemonic: "AUT", region: "Europe", age: 81.96, expenditure: 7275, color: getRandomColor() },
+        { name: "Denmark", mnemonic: "DNK", region: "Europe", age: 81.93, expenditure: 6280, color: getRandomColor() },
+        { name: "Finland", mnemonic: "FIN", region: "Europe", age: 81.91, expenditure: 5676, color: getRandomColor() },
+        { name: "Greece", mnemonic: "GRC", region: "Europe", age: 81.86, expenditure: 3015, color: getRandomColor() },
+        { name: "Puerto Rico", mnemonic: "PRI", region: "North America", age: 81.69, expenditure: 1500, color: getRandomColor() }, // Estimated
+        { name: "Slovenia", mnemonic: "SVN", region: "Europe", age: 81.60, expenditure: 4114, color: getRandomColor() },
+        { name: "Germany", mnemonic: "DEU", region: "Europe", age: 81.38, expenditure: 8011, color: getRandomColor() },
+        { name: "United Kingdom", mnemonic: "GBR", region: "Europe", age: 81.30, expenditure: 5493, color: getRandomColor() },
+        { name: "Chile", mnemonic: "CHL", region: "South America", age: 81.17, expenditure: 2699, color: getRandomColor() },
+        { name: "Costa Rica", mnemonic: "CRI", region: "North America", age: 80.80, expenditure: 1658, color: getRandomColor() },
+        { name: "Czech Republic", mnemonic: "CZE", region: "Europe", age: 79.83, expenditure: 4499, color: getRandomColor() },
+        { name: "Albania", mnemonic: "ALB", region: "Europe", age: 79.60, expenditure: 500, color: getRandomColor() }, // Estimated
+        { name: "Panama", mnemonic: "PAN", region: "North America", age: 79.59, expenditure: 1200, color: getRandomColor() }, // Estimated
+        { name: "United States", mnemonic: "USA", region: "North America", age: 79.30, expenditure: 12555, color: getRandomColor() },
+        { name: "Estonia", mnemonic: "EST", region: "Europe", age: 79.15, expenditure: 3091, color: getRandomColor() },
+        { name: "Poland", mnemonic: "POL", region: "Europe", age: 78.63, expenditure: 2973, color: getRandomColor() },
+        { name: "Croatia", mnemonic: "HRV", region: "Europe", age: 78.58, expenditure: 2000, color: getRandomColor() }, // Estimated
+        { name: "Slovakia", mnemonic: "SVK", region: "Europe", age: 78.34, expenditure: 2691, color: getRandomColor() },
+        { name: "Cuba", mnemonic: "CUB", region: "North America", age: 78.08, expenditure: 1186, color: getRandomColor() },
+        { name: "China", mnemonic: "CHN", region: "Asia", age: 79.00, expenditure: 700, color: getRandomColor() }, // Estimated
+        { name: "Peru", mnemonic: "PER", region: "South America", age: 77.74, expenditure: 400, color: getRandomColor() }, // Estimated
+        { name: "Colombia", mnemonic: "COL", region: "South America", age: 77.72, expenditure: 500, color: getRandomColor() }, // Estimated
+        { name: "Antigua and Barbuda", mnemonic: "ATG", region: "North America", age: 77.60, expenditure: 830, color: getRandomColor() },
+        { name: "Argentina", mnemonic: "ARG", region: "South America", age: 77.39, expenditure: 1000, color: getRandomColor() }, // Estimated
+        { name: "Ecuador", mnemonic: "ECU", region: "South America", age: 77.39, expenditure: 400, color: getRandomColor() }, // Estimated
+        { name: "Turkey", mnemonic: "TUR", region: "Asia", age: 77.16, expenditure: 1827, color: getRandomColor() },
+        { name: "Montenegro", mnemonic: "MNE", region: "Europe", age: 77.09, expenditure: 888, color: getRandomColor() },
+        { name: "Hungary", mnemonic: "HUN", region: "Europe", age: 77.02, expenditure: 2840, color: getRandomColor() },
+        { name: "Malaysia", mnemonic: "MYS", region: "Asia", age: 76.66, expenditure: 500, color: getRandomColor() }, // Estimated
+        { name: "Tunisia", mnemonic: "TUN", region: "Africa", age: 76.51, expenditure: 300, color: getRandomColor() }, // Estimated
+        { name: "Thailand", mnemonic: "THA", region: "Asia", age: 76.41, expenditure: 300, color: getRandomColor() }, // Estimated
+        { name: "Algeria", mnemonic: "DZA", region: "Africa", age: 76.26, expenditure: 300, color: getRandomColor() }, // Estimated
+        { name: "Latvia", mnemonic: "LVA", region: "Europe", age: 76.19, expenditure: 3445, color: getRandomColor() },
+        { name: "Lithuania", mnemonic: "LTU", region: "Europe", age: 76.03, expenditure: 3587, color: getRandomColor() },
+        { name: "Romania", mnemonic: "ROU", region: "Europe", age: 75.94, expenditure: 800, color: getRandomColor() }, // Estimated
+        { name: "Brazil", mnemonic: "BRA", region: "South America", age: 75.85, expenditure: 500, color: getRandomColor() }, // Estimated
+        { name: "Armenia", mnemonic: "ARM", region: "Asia", age: 75.68, expenditure: 400, color: getRandomColor() }, // Estimated
+        { name: "Bulgaria", mnemonic: "BGR", region: "Europe", age: 75.64, expenditure: 857, color: getRandomColor() },
+        { name: "Mexico", mnemonic: "MEX", region: "North America", age: 75.07, expenditure: 1181, color: getRandomColor() },
+        { name: "Mauritius", mnemonic: "MUS", region: "Africa", age: 74.93, expenditure: 600, color: getRandomColor() }, // Estimated
+        { name: "Bangladesh", mnemonic: "BGD", region: "Asia", age: 74.67, expenditure: 100, color: getRandomColor() }, // Estimated
+        { name: "Vietnam", mnemonic: "VNM", region: "Asia", age: 74.59, expenditure: 200, color: getRandomColor() }, // Estimated
+        { name: "Azerbaijan", mnemonic: "AZE", region: "Asia", age: 74.43, expenditure: 300, color: getRandomColor() }, // Estimated
+        { name: "Kazakhstan", mnemonic: "KAZ", region: "Asia", age: 74.40, expenditure: 300, color: getRandomColor() }, // Estimated
+        { name: "Paraguay", mnemonic: "PRY", region: "South America", age: 73.84, expenditure: 400, color: getRandomColor() }, // Estimated
+        { name: "Dominican Republic", mnemonic: "DOM", region: "North America", age: 73.72, expenditure: 400, color: getRandomColor() }, // Estimated
+        { name: "North Korea", mnemonic: "PRK", region: "Asia", age: 73.64, expenditure: 100, color: getRandomColor() }, // Estimated
+        { name: "Serbia", mnemonic: "SRB", region: "Europe", age: 76.77, expenditure: 1312, color: getRandomColor() }
+    ];
+
+    // --- 2. Utility Functions ---
+    function getRandomColor() {
+        const r = Math.floor(Math.random() * 180);
+        const g = Math.floor(Math.random() * 180);
+        const b = Math.floor(Math.random() * 180);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getRandomLabelPosition() {
+        const anchors = ['center', 'start', 'end'];
+        const aligns = ['center', 'start', 'end', 'top', 'bottom'];
+        const offsets = [-10, -5, 5, 10];
+        let anchor, align;
+        do {
+            anchor = anchors[Math.floor(Math.random() * anchors.length)];
+            align = aligns[Math.floor(Math.random() * aligns.length)];
+        } while (anchor === 'center' && align === 'center');
+        return {
+            anchor: anchor,
+            align: align,
+            offset: offsets[Math.floor(Math.random() * offsets.length)]
+        };
+    }
+
+    // --- 3. Global Variables ---
+    let expenditureChart = null;
+    let currentFontSize = 8;
+    const regions = [...new Set(countriesData.map(c => c.region))].sort();
+    let selectedRegions = [...regions];
+
+    // --- 4. DOM Elements ---
+    const chartCanvas = document.getElementById('expenditureChart').getContext('2d');
+    const regionFiltersContainer = document.getElementById('region-filters');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const fontSizeValueSpan = document.getElementById('font-size-value');
+
+    // --- 5. Setup Controls ---
+    function setupControls() {
+        regionFiltersContainer.innerHTML = '<strong>Filter by Region:</strong> ';
+        regions.forEach(region => {
+            const div = document.createElement('div');
+            div.className = 'region-filter';
+            div.style.display = 'inline-block';
+            div.style.marginRight = '15px';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `region-${region.replace(/\s+/g, '-')}`;
+            checkbox.value = region;
+            checkbox.checked = selectedRegions.includes(region);
+            checkbox.addEventListener('change', handleRegionFilterChange);
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = region;
+            div.appendChild(checkbox);
+            div.appendChild(label);
+            regionFiltersContainer.appendChild(div);
+        });
+        fontSizeSlider.value = currentFontSize;
+        fontSizeValueSpan.textContent = currentFontSize;
+        fontSizeSlider.removeEventListener('input', handleFontSizeChange);
+        fontSizeSlider.addEventListener('input', handleFontSizeChange);
+    }
+
+    // --- 6. Event Handlers ---
+    function handleRegionFilterChange() {
+        selectedRegions = [];
+        const checkboxes = regionFiltersContainer.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            if (cb.checked) selectedRegions.push(cb.value);
+        });
+        updateChartData();
+    }
+
+    function handleFontSizeChange(event) {
+        currentFontSize = parseInt(event.target.value, 10);
+        fontSizeValueSpan.textContent = currentFontSize;
+        updateChartData();
+    }
+
+    // --- 7. Chart Logic ---
+    function getFilteredData() {
+        return countriesData.filter(country => selectedRegions.includes(country.region));
+    }
+
+    function createChartConfig(data) {
+        const labelPositions = data.map(() => getRandomLabelPosition());
+        return {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Countries',
+                    data: data.map(country => ({
+                        x: country.expenditure,
+                        y: country.age,
+                        name: country.name,
+                        mnemonic: country.mnemonic,
+                        region: country.region,
+                        color: country.color
+                    })),
+                    backgroundColor: data.map(country => country.color),
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    datalabels: {
+                        formatter: (value, context) => context.dataset.data[context.dataIndex].mnemonic,
+                        color: (context) => context.dataset.data[context.dataIndex].color,
+                        font: { size: currentFontSize, weight: 'bold' },
+                        anchor: (context) => labelPositions[context.dataIndex].anchor,
+                        align: (context) => labelPositions[context.dataIndex].align,
+                        offset: (context) => labelPositions[context.dataIndex].offset
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = context.dataset.data[context.dataIndex];
+                                return [
+                                    `${point.name} (${point.mnemonic})`,
+                                    `Region: ${point.region}`,
+                                    `Avg. Lifespan: ${point.y}`,
+                                    `Health Exp (USD): ${point.x}`
+                                ];
+                            }
+                        },
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Health Expenditure per Capita (USD)' },
+                        beginAtZero: true
+                    },
+                    y: {
+                        title: { display: true, text: 'Average Lifespan (Years, 2023)' },
+                        beginAtZero: false
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        };
+    }
+
+    function initializeChart() {
+        if (expenditureChart) expenditureChart.destroy();
+        const filteredData = getFilteredData();
+        const config = createChartConfig(filteredData);
+        expenditureChart = new Chart(chartCanvas, config);
+    }
+
+    function updateChartData() {
+        if (!expenditureChart) return;
+        const filteredData = getFilteredData();
+        const labelPositions = filteredData.map(() => getRandomLabelPosition());
+        expenditureChart.data.datasets[0].data = filteredData.map(country => ({
+            x: country.expenditure,
+            y: country.age,
+            name: country.name,
+            mnemonic: country.mnemonic,
+            region: country.region,
+            color: country.color
+        }));
+        expenditureChart.data.datasets[0].backgroundColor = filteredData.map(country => country.color);
+        expenditureChart.options.plugins.datalabels.font.size = currentFontSize;
+        expenditureChart.options.plugins.datalabels.anchor = (context) => labelPositions[context.dataIndex].anchor;
+        expenditureChart.options.plugins.datalabels.align = (context) => labelPositions[context.dataIndex].align;
+        expenditureChart.options.plugins.datalabels.offset = (context) => labelPositions[context.dataIndex].offset;
+        expenditureChart.options.plugins.datalabels.color = (context) => context.dataset.data[context.dataIndex].color;
+        expenditureChart.update();
+    }
+
+    // --- 8. Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        setupControls();
+        initializeChart();
+    });
+</script>
+
+</body>
+</html>
