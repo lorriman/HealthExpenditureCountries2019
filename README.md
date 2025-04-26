@@ -1,4 +1,4 @@
-# AI generated html/javascript survey of countries' health expenditure vs GDP per capita
+# AI generated html/javascript survey of countries' llifespan vs health expenditure % GDP per capita
 
 Just playing around with AIs. Based on 2019 data (ie. pre-covid) from sources found by the AIs.
 
@@ -22,7 +22,7 @@ Grok also needed correcting to keep the chart within the bounds of the view wind
 
 ## data differences
 
-The exercise was inspired by a chart on facebook showing absolute dollar denominated expenditure on health expenditure with the USA far outspending everyone else for a worse death rate. But more meaningful is a comparison by GDP per capita. Well, Grok had the USA as the outlier, like the chart on facebook, but Gemini had it about the same as Germany and Portugal. One makes a political point the other doesn't. I haven't followed this up to find out the truth. 
+The exercise was inspired by a chart on facebook showing absolute dollar denominated expenditure on health expenditure with the USA far outspending everyone else for a worse death rate. But more meaningful is a comparison by percentage GDP per capita. Well, Grok had the USA as the outlier, like the chart on facebook, but Gemini had it about the same as Germany and Portugal. One makes a political point the other doesn't. I haven't followed this up to find out the truth. 
 
 
 
