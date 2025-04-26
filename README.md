@@ -1,4 +1,4 @@
-# AI generated html/javascript survey of countries' llifespan vs health expenditure % GDP per capita
+# AI generated html/javascript survey of countries' longevity vs health expenditure % GDP per capita
 
 Just playing around with AIs. Based on 2019 data (ie. pre-covid) from sources found by the AIs.
 
