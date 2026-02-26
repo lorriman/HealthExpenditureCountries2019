@@ -78,6 +78,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
 <script>
+
+   minObesity=100;
+    maxObesity=0;
+
     // --- 1. Parsed Data ---
    const countriesData = [
     { name: "Monaco", mnemonic: "MCO", region: "Europe", age: 86.37, expenditure: 3.12, obesity: 12.5, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
@@ -143,25 +147,52 @@
 
 ];
 
+ 
+
+
+countriesData.forEach(country => {
+    obesity=country.obesity;
+    if( obesity>maxObesity) maxObesity=obesity;
+    if( obesity<minObesity) minObesity=obesity;
+});
+
 countriesData.forEach(country => {
     country.pointColor = getPointColor(country.color, country.obesity);
+   
 });
 
     // --- 2. Utility Functions ---
 
 function getPointColor(baseColor, obesity) {
-    const opacity = Math.max(0.1, Math.min(1.0, obesity / 45));
+    const opacity = getOpacity(obesity);
     const [r, g, b] = baseColor.match(/\d+/g).map(Number);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    //return `rgba(${r}, ${g}, ${b})`;
+    return `rgba(${r}, ${g}, ${getBlueObesity(obesity)}, ${opacity})`;
 }
 
 
+function getOpacity( obesity) {
+     return Math.max(0.01, Math.min(1.0, obesity / maxObesity));
+    
+}
+
+function getBlueObesity( obesity) {
+
+    return 255 * (obesity / maxObesity);
+}
+
     function getRandomColor() {
-        const r = Math.floor(Math.random() * 180);
-        const g = Math.floor(Math.random() * 180);
-        const b = Math.floor(Math.random() * 180);
-        return `rgb(${r}, ${g}, ${b})`;
-    }
+  const channels = [
+    Math.floor(Math.random() * 5 + 30),
+    Math.floor(Math.random() * 5 + 30),
+    Math.floor(Math.random() * 5 + 30)
+  ];
+  
+  //const ffIndex = Math.floor(Math.random() * 3);
+  //channels[ffIndex] = 255;
+  
+  return `rgb(${channels[0]}, ${channels[1]}, ${channels[2]})`;
+}
 
     function getRandomLabelPosition() {
         const anchors = ['center', 'start', 'end'];
@@ -256,7 +287,8 @@ function getPointColor(baseColor, obesity) {
                         mnemonic: country.mnemonic,
                         region: country.region,
                         color: country.color,
-obesity: country.obesity
+obesity: country.obesity,
+opacity : getOpacity(country.obesity)
                     })),
                     backgroundColor: data.map(country => country.pointColor),
                     /*
@@ -267,6 +299,8 @@ obesity: country.obesity
     }), */
                     pointRadius: 6,
                     pointHoverRadius: 8,
+                    pointBorderWidth: 3
+
                 }]
             },
             options: {
@@ -283,7 +317,7 @@ obesity: country.obesity
                     },
 subtitle: {
     display: true,
-    text: '(Transparency of indicators indicates signal strength by obesity, more obese = more need for medical.)',
+    text: '(Color lightness indicates signal strength: lighter = less obese = less need for medical = less meaningful.)',
     font: { size: 12 },
     padding: { top: 0, bottom: 10 }
 },
@@ -299,7 +333,8 @@ subtitle: {
                 `Region: ${point.region}`,
                 `Avg. Lifespan: ${point.y}`,
                 `Health Exp (% of GDP per Capita): ${point.x.toFixed(2)}%`,
-                obesityLine
+                obesityLine,
+                point.opacity
             ];
         }
     },
