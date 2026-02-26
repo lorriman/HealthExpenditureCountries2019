@@ -79,62 +79,83 @@
 
 <script>
     // --- 1. Parsed Data ---
-    const countriesData = [
-    { name: "Monaco", mnemonic: "MCO", region: "Europe", age: 86.37, expenditure: 3.12, obesity: 12.5, color: getRandomColor() },
-    { name: "Hong Kong", mnemonic: "HKG", region: "Asia", age: 85.51, expenditure: 7.71, obesity: 7.5, color: getRandomColor() },
-    { name: "Japan", mnemonic: "JPN", region: "Asia", age: 84.71, expenditure: 10.74, obesity: 4.9, color: getRandomColor() },
-    { name: "South Korea", mnemonic: "KOR", region: "Asia", age: 84.33, expenditure: 9.88, obesity: 7.6, color: getRandomColor() },
-    { name: "Andorra", mnemonic: "AND", region: "Europe", age: 84.04, expenditure: 7.93, obesity: 20.5, color: getRandomColor() },
-    { name: "Switzerland", mnemonic: "CHE", region: "Europe", age: 83.95, expenditure: 11.69, obesity: 22.0, color: getRandomColor() },
-    { name: "Australia", mnemonic: "AUS", region: "Oceania", age: 83.92, expenditure: 10.0, obesity: 32.0, color: getRandomColor() },
-    { name: "Italy", mnemonic: "ITA", region: "Europe", age: 83.72, expenditure: 9.0, obesity: 22.0, color: getRandomColor() },
-    { name: "Spain", mnemonic: "ESP", region: "Europe", age: 83.67, expenditure: 10.4, obesity: 24.0, color: getRandomColor() },
-    { name: "France", mnemonic: "FRA", region: "Europe", age: 83.33, expenditure: 11.5, obesity: 22.0, color: getRandomColor() },
-    { name: "Norway", mnemonic: "NOR", region: "Europe", age: 83.31, expenditure: 10.1, obesity: 24.0, color: getRandomColor() },
-    { name: "Sweden", mnemonic: "SWE", region: "Europe", age: 83.26, expenditure: 11.2, obesity: 23.0, color: getRandomColor() },
-    { name: "Canada", mnemonic: "CAN", region: "North America", age: 82.63, expenditure: 12.42, obesity: 30.0, color: getRandomColor() },
-    { name: "Israel", mnemonic: "ISR", region: "Asia", age: 82.41, expenditure: 7.8, obesity: 27.0, color: getRandomColor() },
-    { name: "Ireland", mnemonic: "IRL", region: "Europe", age: 82.41, expenditure: 6.6, obesity: 27.0, color: getRandomColor() },
-    { name: "Portugal", mnemonic: "PRT", region: "Europe", age: 82.36, expenditure: 11.0, obesity: 25.0, color: getRandomColor() },
-    { name: "Netherlands", mnemonic: "NLD", region: "Europe", age: 82.16, expenditure: 11.0, obesity: 22.0, color: getRandomColor() },
-    { name: "Belgium", mnemonic: "BEL", region: "Europe", age: 82.11, expenditure: 10.8, obesity: 23.0, color: getRandomColor() },
-    { name: "Austria", mnemonic: "AUT", region: "Europe", age: 81.96, expenditure: 11.2, obesity: 22.0, color: getRandomColor() },
-    { name: "Denmark", mnemonic: "DNK", region: "Europe", age: 81.93, expenditure: 10.8, obesity: 22.0, color: getRandomColor() },
-    { name: "Finland", mnemonic: "FIN", region: "Europe", age: 81.91, expenditure: 10.5, obesity: 23.0, color: getRandomColor() },
-    { name: "Greece", mnemonic: "GRC", region: "Europe", age: 81.86, expenditure: 9.5, obesity: 25.0, color: getRandomColor() },
-    { name: "Slovenia", mnemonic: "SVN", region: "Europe", age: 81.60, expenditure: 9.0, obesity: 25.0, color: getRandomColor() },
-    { name: "Germany", mnemonic: "DEU", region: "Europe", age: 81.38, expenditure: 11.7, obesity: 23.0, color: getRandomColor() },
-    { name: "United Kingdom", mnemonic: "GBR", region: "Europe", age: 81.30, expenditure: 10.87, obesity: 28.0, color: getRandomColor() },
-    { name: "Chile", mnemonic: "CHL", region: "South America", age: 81.17, expenditure: 9.0, obesity: 32.0, color: getRandomColor() },
-    { name: "Costa Rica", mnemonic: "CRI", region: "North America", age: 80.80, expenditure: 7.5, obesity: 27.0, color: getRandomColor() },
-    { name: "Czech Republic", mnemonic: "CZE", region: "Europe", age: 79.83, expenditure: 9.0, obesity: 27.0, color: getRandomColor() },
-    { name: "United States", mnemonic: "USA", region: "North America", age: 79.30, expenditure: 16.69, obesity: 41.6, color: getRandomColor() },
-    { name: "Estonia", mnemonic: "EST", region: "Europe", age: 79.15, expenditure: 10.23, obesity: 25.0, color: getRandomColor() },
-    { name: "Poland", mnemonic: "POL", region: "Europe", age: 78.63, expenditure: 13.44, obesity: 27.0, color: getRandomColor() },
-    { name: "Croatia", mnemonic: "HRV", region: "Europe", age: 78.58, expenditure: 9.78, obesity: 27.0, color: getRandomColor() },
-    { name: "Slovakia", mnemonic: "SVK", region: "Europe", age: 78.34, expenditure: 10.98, obesity: 27.0, color: getRandomColor() },
-    { name: "Cuba", mnemonic: "CUB", region: "North America", age: 78.08, expenditure: 12.35, obesity: 24.0, color: getRandomColor() },
-    { name: "China", mnemonic: "CHN", region: "Asia", age: 79.00, expenditure: 5.79, obesity: 8.0, color: getRandomColor() },
-    { name: "Peru", mnemonic: "PER", region: "South America", age: 77.74, expenditure: 5.66, obesity: 22.0, color: getRandomColor() },
-    { name: "Colombia", mnemonic: "COL", region: "South America", age: 77.72, expenditure: 8.08, obesity: 22.0, color: getRandomColor() },
-    { name: "Turkey", mnemonic: "TUR", region: "Asia", age: 77.16, expenditure: 13.94, obesity: 32.0, color: getRandomColor() },
-    { name: "Montenegro", mnemonic: "MNE", region: "Europe", age: 77.09, expenditure: 6.84, obesity: 23.0, color: getRandomColor() },
-    { name: "Hungary", mnemonic: "HUN", region: "Europe", age: 77.02, expenditure: 6.36, obesity: 30.0, color: getRandomColor() },
-    { name: "Malaysia", mnemonic: "MYS", region: "Asia", age: 76.66, expenditure: 3.94, obesity: 18.0, color: getRandomColor() },
-    { name: "Tunisia", mnemonic: "TUN", region: "Africa", age: 76.51, expenditure: 7.20, obesity: 27.0, color: getRandomColor() },
-    { name: "Thailand", mnemonic: "THA", region: "Asia", age: 76.41, expenditure: 4.32, obesity: 12.0, color: getRandomColor() },
-    { name: "Latvia", mnemonic: "LVA", region: "Europe", age: 76.19, expenditure: 13.82, obesity: 26.0, color: getRandomColor() },
-    { name: "Lithuania", mnemonic: "LTU", region: "Europe", age: 76.03, expenditure: 12.40, obesity: 27.0, color: getRandomColor() },
-    { name: "Romania", mnemonic: "ROU", region: "Europe", age: 75.94, expenditure: 4.78, obesity: 22.0, color: getRandomColor() },
-    { name: "Brazil", mnemonic: "BRA", region: "South America", age: 75.85, expenditure: 5.48, obesity: 22.0, color: getRandomColor() },
-    { name: "Bulgaria", mnemonic: "BGR", region: "Europe", age: 75.64, expenditure: 5.94, obesity: 25.0, color: getRandomColor() },
-    { name: "Mexico", mnemonic: "MEX", region: "North America", age: 75.07, expenditure: 8.48, obesity: 32.0, color: getRandomColor() },
-    { name: "Mauritius", mnemonic: "MUS", region: "Africa", age: 74.93, expenditure: 5.78, obesity: 22.0, color: getRandomColor() },
-    { name: "Vietnam", mnemonic: "VNM", region: "Asia", age: 74.59, expenditure: 4.54, obesity: 2.1, color: getRandomColor() },
-    { name: "Russia", mnemonic: "RUS", region: "Europe", age: 73.15, expenditure: 6.51, obesity: 23.0, color: getRandomColor() }
+   const countriesData = [
+    { name: "Monaco", mnemonic: "MCO", region: "Europe", age: 86.37, expenditure: 3.12, obesity: 12.5, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Hong Kong", mnemonic: "HKG", region: "Asia", age: 85.51, expenditure: 7.71, obesity: 7.5, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Japan", mnemonic: "JPN", region: "Asia", age: 84.71, expenditure: 10.74, obesity: 4.9, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "South Korea", mnemonic: "KOR", region: "Asia", age: 84.33, expenditure: 9.88, obesity: 7.6, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Andorra", mnemonic: "AND", region: "Europe", age: 84.04, expenditure: 7.93, obesity: 20.5, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Switzerland", mnemonic: "CHE", region: "Europe", age: 83.95, expenditure: 11.69, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Australia", mnemonic: "AUS", region: "Oceania", age: 83.92, expenditure: 10.0, obesity: 32.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Italy", mnemonic: "ITA", region: "Europe", age: 83.72, expenditure: 9.0, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Spain", mnemonic: "ESP", region: "Europe", age: 83.67, expenditure: 10.4, obesity: 24.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "France", mnemonic: "FRA", region: "Europe", age: 83.33, expenditure: 11.5, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Norway", mnemonic: "NOR", region: "Europe", age: 83.31, expenditure: 10.1, obesity: 24.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Sweden", mnemonic: "SWE", region: "Europe", age: 83.26, expenditure: 11.2, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Canada", mnemonic: "CAN", region: "North America", age: 82.63, expenditure: 12.42, obesity: 30.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Israel", mnemonic: "ISR", region: "Asia", age: 82.41, expenditure: 7.8, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Ireland", mnemonic: "IRL", region: "Europe", age: 82.41, expenditure: 6.6, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Portugal", mnemonic: "PRT", region: "Europe", age: 82.36, expenditure: 11.0, obesity: 25.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Netherlands", mnemonic: "NLD", region: "Europe", age: 82.16, expenditure: 11.0, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Belgium", mnemonic: "BEL", region: "Europe", age: 82.11, expenditure: 10.8, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Austria", mnemonic: "AUT", region: "Europe", age: 81.96, expenditure: 11.2, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Denmark", mnemonic: "DNK", region: "Europe", age: 81.93, expenditure: 10.8, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Finland", mnemonic: "FIN", region: "Europe", age: 81.91, expenditure: 10.5, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Greece", mnemonic: "GRC", region: "Europe", age: 81.86, expenditure: 9.5, obesity: 25.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Slovenia", mnemonic: "SVN", region: "Europe", age: 81.60, expenditure: 9.0, obesity: 25.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Germany", mnemonic: "DEU", region: "Europe", age: 81.38, expenditure: 11.7, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "United Kingdom", mnemonic: "GBR", region: "Europe", age: 81.30, expenditure: 10.87, obesity: 28.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Chile", mnemonic: "CHL", region: "South America", age: 81.17, expenditure: 9.0, obesity: 32.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Costa Rica", mnemonic: "CRI", region: "North America", age: 80.80, expenditure: 7.5, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Czech Republic", mnemonic: "CZE", region: "Europe", age: 79.83, expenditure: 9.0, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "United States", mnemonic: "USA", region: "North America", age: 79.30, expenditure: 16.69, obesity: 41.6, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Estonia", mnemonic: "EST", region: "Europe", age: 79.15, expenditure: 10.23, obesity: 25.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Poland", mnemonic: "POL", region: "Europe", age: 78.63, expenditure: 13.44, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Croatia", mnemonic: "HRV", region: "Europe", age: 78.58, expenditure: 9.78, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Slovakia", mnemonic: "SVK", region: "Europe", age: 78.34, expenditure: 10.98, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Cuba", mnemonic: "CUB", region: "North America", age: 78.08, expenditure: 12.35, obesity: 24.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "China", mnemonic: "CHN", region: "Asia", age: 79.00, expenditure: 5.79, obesity: 8.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Peru", mnemonic: "PER", region: "South America", age: 77.74, expenditure: 5.66, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Colombia", mnemonic: "COL", region: "South America", age: 77.72, expenditure: 8.08, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Turkey", mnemonic: "TUR", region: "Asia", age: 77.16, expenditure: 13.94, obesity: 32.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Montenegro", mnemonic: "MNE", region: "Europe", age: 77.09, expenditure: 6.84, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Hungary", mnemonic: "HUN", region: "Europe", age: 77.02, expenditure: 6.36, obesity: 30.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Malaysia", mnemonic: "MYS", region: "Asia", age: 76.66, expenditure: 3.94, obesity: 18.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Tunisia", mnemonic: "TUN", region: "Africa", age: 76.51, expenditure: 7.20, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Thailand", mnemonic: "THA", region: "Asia", age: 76.41, expenditure: 4.32, obesity: 12.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Latvia", mnemonic: "LVA", region: "Europe", age: 76.19, expenditure: 13.82, obesity: 26.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Lithuania", mnemonic: "LTU", region: "Europe", age: 76.03, expenditure: 12.40, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Romania", mnemonic: "ROU", region: "Europe", age: 75.94, expenditure: 4.78, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Brazil", mnemonic: "BRA", region: "South America", age: 75.85, expenditure: 5.48, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Bulgaria", mnemonic: "BGR", region: "Europe", age: 75.64, expenditure: 5.94, obesity: 25.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Mexico", mnemonic: "MEX", region: "North America", age: 75.07, expenditure: 8.48, obesity: 32.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Mauritius", mnemonic: "MUS", region: "Africa", age: 74.93, expenditure: 5.78, obesity: 22.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Vietnam", mnemonic: "VNM", region: "Asia", age: 74.59, expenditure: 4.54, obesity: 2.1, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Russia", mnemonic: "RUS", region: "Europe", age: 73.15, expenditure: 6.51, obesity: 23.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+    { name: "Algeria", mnemonic: "DZA", region: "Africa", age: 77.0, expenditure: 6.3, obesity: 27.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Morocco", mnemonic: "MAR", region: "Africa", age: 75.0, expenditure: 5.5, obesity: 26.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Egypt", mnemonic: "EGY", region: "Africa", age: 72.0, expenditure: 4.4, obesity: 32.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "South Africa", mnemonic: "ZAF", region: "Africa", age: 66.0, expenditure: 8.5, obesity: 30.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Ghana", mnemonic: "GHA", region: "Africa", age: 66.0, expenditure: 4.0, obesity: 12.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Kenya", mnemonic: "KEN", region: "Africa", age: 64.0, expenditure: 4.5, obesity: 12.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Nigeria", mnemonic: "NGA", region: "Africa", age: 54.5, expenditure: 3.0, obesity: 9.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" },
+{ name: "Ethiopia", mnemonic: "ETH", region: "Africa", age: 69.0, expenditure: 3.5, obesity: 5.0, color: getRandomColor(), pointColor: "rgb(0,0,0)" }
+
 ];
 
+countriesData.forEach(country => {
+    country.pointColor = getPointColor(country.color, country.obesity);
+});
+
     // --- 2. Utility Functions ---
+
+function getPointColor(baseColor, obesity) {
+    const opacity = Math.max(0.1, Math.min(1.0, obesity / 45));
+    const [r, g, b] = baseColor.match(/\d+/g).map(Number);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+
     function getRandomColor() {
         const r = Math.floor(Math.random() * 180);
         const g = Math.floor(Math.random() * 180);
@@ -237,11 +258,13 @@
                         color: country.color,
 obesity: country.obesity
                     })),
+                    backgroundColor: data.map(country => country.pointColor),
+                    /*
                     backgroundColor: data.map(country => {
         const opacity = Math.max(0.1, Math.min(1.0, country.obesity / 45));
         const [r, g, b] = country.color.match(/\d+/g).map(Number);
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    }),
+    }), */
                     pointRadius: 6,
                     pointHoverRadius: 8,
                 }]
@@ -320,7 +343,7 @@ subtitle: {
             color: country.color,
 obesity: country.obesity
         }));
-        expenditureChart.data.datasets[0].backgroundColor = filteredData.map(country => country.color);
+        expenditureChart.data.datasets[0].backgroundColor = filteredData.map(country => country.pointColor);
         expenditureChart.options.plugins.datalabels.font.size = currentFontSize;
         expenditureChart.options.plugins.datalabels.anchor = (context) => labelPositions[context.dataIndex].anchor;
         expenditureChart.options.plugins.datalabels.align = (context) => labelPositions[context.dataIndex].align;
