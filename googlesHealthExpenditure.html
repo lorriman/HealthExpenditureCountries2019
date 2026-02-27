@@ -281,8 +281,8 @@ function getBlueObesity( obesity) {
                 datasets: [{
                     label: 'Countries',
                     data: data.map(country => ({
-                        x: country.expenditure,
-                        y: country.age,
+                        x: country.age,
+                        y: country.expenditure,
                         name: country.name,
                         mnemonic: country.mnemonic,
                         region: country.region,
@@ -306,7 +306,18 @@ opacity : getOpacity(country.obesity)
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: {
+        animationDuration: 1          // default is 400 ms — set to 0
+    },
                 plugins: {
+                    tooltip: {
+
+
+            animation: {
+                duration: 1           // or very low value e.g. 80–150
+            },
+            // ... your existing tooltip settings ...
+        },
                     datalabels: {
                         formatter: (value, context) => context.dataset.data[context.dataIndex].mnemonic,
                         color: (context) => context.dataset.data[context.dataIndex].color,
@@ -331,10 +342,10 @@ subtitle: {
             return [
                 `${point.name} (${point.mnemonic})`,
                 `Region: ${point.region}`,
-                `Avg. Lifespan: ${point.y}`,
-                `Health Exp (% of GDP per Capita): ${point.x.toFixed(2)}%`,
-                obesityLine,
-                point.opacity
+                `Avg. Lifespan: ${point.x}`,                    // ← was point.y
+`Health Exp (% of GDP per Capita): ${point.y.toFixed(2)}%`,
+                obesityLine//,
+//                point.opacity
             ];
         }
     },
@@ -345,13 +356,13 @@ subtitle: {
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: 'Health Expenditure (% of GDP per Capita, 2023)' },
-                        beginAtZero: true
-                    },
+    title: { display: true, text: 'Average Lifespan (Years, 2023)' },
+    beginAtZero: false
+},
                     y: {
-                        title: { display: true, text: 'Average Lifespan (Years, 2023)' },
-                        beginAtZero: false
-                    }
+    title: { display: true, text: 'Health Expenditure (% of GDP per Capita, 2023)' },
+    beginAtZero: true
+}
                 }
             },
             plugins: [ChartDataLabels]
